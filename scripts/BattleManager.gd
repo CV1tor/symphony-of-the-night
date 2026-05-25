@@ -48,6 +48,8 @@ var timeline
 var status_label: Label
 var timer_label: Label
 var feedback_label: Label
+var role_label: Label
+var controls_label: Label
 var p1_health: ProgressBar
 var p2_health: ProgressBar
 var p1_panel: Panel
@@ -133,6 +135,15 @@ func _build_scene() -> void:
 	status_label = _make_label(Vector2(40, 24), Vector2(780, 38), 28)
 	root.add_child(status_label)
 
+	role_label = _make_label(Vector2(40, 62), Vector2(680, 28), 20)
+	role_label.add_theme_color_override("font_color", Color(0.78, 0.82, 0.92))
+	root.add_child(role_label)
+
+	controls_label = _make_label(Vector2(760, 62), Vector2(480, 28), 20)
+	controls_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	controls_label.add_theme_color_override("font_color", Color(0.96, 0.82, 0.31))
+	root.add_child(controls_label)
+
 	timer_label = _make_label(Vector2(1040, 28), Vector2(200, 32), 24)
 	timer_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	root.add_child(timer_label)
@@ -205,7 +216,10 @@ func _begin_turn_ready_delay() -> void:
 	_set_players(active_player, 1 - active_player)
 	turn_ready_started_at = Conductor.get_song_time()
 	status_label.text = "P%d get ready to attack (%s)" % [active_player + 1, _controls_for_player(active_player)]
+	role_label.text = "Attacker: P%d  |  Defender: P%d" % [active_player + 1, defender_player + 1]
+	controls_label.text = "Current controls: %s" % _controls_for_player(active_player)
 	feedback_label.text = ""
+	Conductor.play_sfx("turn_start")
 	_highlight_active()
 
 
@@ -217,6 +231,8 @@ func _start_recording() -> void:
 	feedback_label.text = ""
 	_set_players(active_player, 1 - active_player)
 	status_label.text = "P%d attacks: enter up to 6 notes (%s)" % [active_player + 1, _controls_for_player(active_player)]
+	role_label.text = "Record a phrase: %.0f seconds, max %d notes" % [Rules.RECORD_DURATION, Rules.MAX_SEQUENCE_INPUTS]
+	controls_label.text = "P%d input: %s" % [active_player + 1, _controls_for_player(active_player)]
 	_highlight_active()
 
 
@@ -226,6 +242,8 @@ func _start_defending() -> void:
 	pending_misses = sequence.size()
 	_set_players(active_player, 1 - active_player)
 	status_label.text = "P%d defends: match the notes at the hit line (%s)" % [defender_player + 1, _controls_for_player(defender_player)]
+	role_label.text = "Get ready: phrase starts after %.0fs" % Rules.DEFENSE_PHRASE_DELAY
+	controls_label.text = "P%d input: %s" % [defender_player + 1, _controls_for_player(defender_player)]
 	timeline.load_sequence(sequence, defend_started_at)
 	_highlight_active()
 
@@ -258,47 +276,51 @@ func _record_input(key: String) -> void:
 		"key": key,
 	})
 	feedback_label.text = "Recorded %s (%d/%d)" % [key.to_upper(), sequence.size(), Rules.MAX_SEQUENCE_INPUTS]
+	Conductor.play_sfx("record_note")
 
 
 func _defend_input(key: String) -> void:
 	var note: Dictionary = timeline.get_pending_note_for_key(key)
 	if note.is_empty():
-		_apply_damage(defender_player, Rules.DAMAGE_ON_MISS, "WRONG")
+		Conductor.play_sfx("wrong")
+		_apply_damage(defender_player, Rules.DAMAGE_ON_MISS, "WRONG", "Wrong note")
 		return
 
 	var delta := Conductor.get_song_time() - float(note["timestamp"])
 	var result: String = Rules.judge(delta)
 
 	if result == "MISS":
-		timeline.mark_resolved(int(note["index"]))
+		timeline.mark_resolved(int(note["index"]), "MISS")
 		pending_misses -= 1
-		_apply_damage(defender_player, Rules.DAMAGE_ON_MISS, "MISS")
+		Conductor.play_sfx("miss")
+		_apply_damage(defender_player, Rules.DAMAGE_ON_MISS, "MISS", "Bad timing")
 		return
 
-	timeline.mark_resolved(int(note["index"]))
+	timeline.mark_resolved(int(note["index"]), result)
 	pending_misses -= 1
-	feedback_label.text = result
-	if result == "PERFECT":
-		_flash(Color(0.42, 0.95, 0.82))
-	else:
-		_flash(Color(0.96, 0.82, 0.31))
+	Conductor.play_sfx(result.to_lower())
+	_show_feedback(result, Rules.RESULT_COLORS[result])
 
 
 func _on_note_missed(note: Dictionary) -> void:
 	if state != BattleState.DEFENDING:
 		return
 
-	timeline.mark_resolved(int(note["index"]))
+	timeline.mark_resolved(int(note["index"]), "OMISSION")
 	pending_misses -= 1
-	_apply_damage(defender_player, Rules.DAMAGE_ON_MISS, "OMISSION")
+	Conductor.play_sfx("omission")
+	_apply_damage(defender_player, Rules.DAMAGE_ON_MISS, "OMISSION", "Missed note")
 
 
-func _apply_damage(player_index: int, amount: int, reason: String) -> void:
+func _apply_damage(player_index: int, amount: int, reason: String, detail := "") -> void:
 	health[player_index] = maxi(health[player_index] - amount, 0)
 	_update_health_ui()
-	feedback_label.text = "%s - P%d takes %d" % [reason, player_index + 1, amount]
+	var message := "%s - P%d takes %d" % [reason, player_index + 1, amount]
+	if not detail.is_empty():
+		message = "%s (%s)" % [message, detail]
+	_show_feedback(message, Rules.RESULT_COLORS[reason])
+	Conductor.play_sfx("damage")
 	_shake(5.0, 0.12)
-	_flash(Color(0.95, 0.25, 0.2))
 
 	if health[player_index] <= 0:
 		_game_over(1 - player_index)
@@ -308,8 +330,11 @@ func _game_over(winner: int) -> void:
 	state = BattleState.GAME_OVER
 	timeline.clear_notes()
 	status_label.text = "P%d wins! Press Enter to restart" % (winner + 1)
+	role_label.text = "Match complete"
+	controls_label.text = "Restart: Enter"
 	timer_label.text = "Game Over"
 	feedback_label.text = "Final blow"
+	Conductor.play_sfx("game_over")
 
 
 func _restart_match() -> void:
@@ -349,12 +374,18 @@ func _defense_remaining_time() -> float:
 	for note in sequence:
 		last_timestamp = maxf(last_timestamp, float(note["timestamp"]))
 
-	return timeline.travel_time + last_timestamp + Rules.MISS_WINDOW - (Conductor.get_song_time() - defend_started_at)
+	return Rules.DEFENSE_PHRASE_DELAY + timeline.travel_time + last_timestamp + Rules.MISS_WINDOW - (Conductor.get_song_time() - defend_started_at)
 
 
 func _update_health_ui() -> void:
 	p1_health.value = health[0]
 	p2_health.value = health[1]
+
+
+func _show_feedback(message: String, color: Color) -> void:
+	feedback_label.text = message
+	feedback_label.add_theme_color_override("font_color", color)
+	_flash(color)
 
 
 func _highlight_active() -> void:

@@ -49,6 +49,8 @@ godot --headless --path . --quit
 project.godot          Godot project configuration
 scenes/Battle.tscn     Main battle scene
 scripts/               GDScript gameplay code
+assets/audio/          Music assets; expected battle theme: battle_theme.ogg
+assets/audio/sfx/      Optional combat sound effects
 icon.svg               Temporary project icon
 AGENTS.md              Project context and contributor notes
 ```
@@ -56,3 +58,7 @@ AGENTS.md              Project context and contributor notes
 ## Development Notes
 
 The MVP intentionally avoids character movement, online multiplayer, items, enemy AI, and complex menus. The current focus is timing feel, turn flow, and clear feedback before adding final art, audio, and polish.
+
+To test music sync, place an `.ogg` file at `assets/audio/battle_theme.ogg`. If the file is missing, the conductor keeps using the internal fallback timer so gameplay still runs.
+
+Optional SFX can be placed in `assets/audio/sfx/` using these names: `record_note.ogg`, `perfect.ogg`, `good.ogg`, `miss.ogg`, `wrong.ogg`, `omission.ogg`, `damage.ogg`, `turn_start.ogg`, and `game_over.ogg`. Missing SFX files are ignored.
