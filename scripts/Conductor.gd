@@ -107,10 +107,7 @@ func get_current_beat() -> int:
 
 
 func _load_default_song() -> void:
-	if not ResourceLoader.exists(DEFAULT_SONG_PATH):
-		return
-
-	var stream := load(DEFAULT_SONG_PATH)
+	var stream := _load_optional_audio_stream(DEFAULT_SONG_PATH)
 	if stream is AudioStream:
 		player.stream = stream
 
@@ -118,10 +115,7 @@ func _load_default_song() -> void:
 func _load_sfx_players() -> void:
 	for sfx_name in SFX_PATHS:
 		var path := String(SFX_PATHS[sfx_name])
-		if not ResourceLoader.exists(path):
-			continue
-
-		var stream := load(path)
+		var stream := _load_optional_audio_stream(path)
 		if not stream is AudioStream:
 			continue
 
@@ -130,3 +124,27 @@ func _load_sfx_players() -> void:
 		sfx_player.stream = stream
 		add_child(sfx_player)
 		_sfx_players[sfx_name] = sfx_player
+
+
+func _load_optional_audio_stream(path: String) -> AudioStream:
+	if not ResourceLoader.exists(path) or _has_invalid_import(path):
+		return null
+
+	var stream := ResourceLoader.load(path)
+	if stream is AudioStream:
+		return stream
+
+	return null
+
+
+func _has_invalid_import(path: String) -> bool:
+	var import_path := "%s.import" % path
+	if not FileAccess.file_exists(import_path):
+		return false
+
+	var import_file := FileAccess.open(import_path, FileAccess.READ)
+	if import_file == null:
+		return false
+
+	var import_text := import_file.get_as_text()
+	return import_text.contains("valid=false")

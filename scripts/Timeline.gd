@@ -5,16 +5,25 @@ signal note_missed(note)
 
 const Rules = preload("res://scripts/BattleRules.gd")
 const LANE_KEYS := ["up", "right", "left", "down"]
+const PIXEL_FONT_PATH := "res://assets/fonts/PressStart2P-Regular.ttf"
 
 var travel_time := 1.35
-var note_speed := 520.0
-var target_x := 280.0
-var spawn_x := 980.0
-var base_y := 430.0
-var lane_gap := 54.0
+var note_speed := 420.0
+var target_x := 350.0
+var spawn_x := 920.0
+var base_y := 610.0
+var lane_gap := 34.0
 var result_hold_time := 0.75
 var notes: Array[Dictionary] = []
 var _missed_indices: Dictionary = {}
+var pixel_font: Font
+
+
+func _ready() -> void:
+	if ResourceLoader.exists(PIXEL_FONT_PATH):
+		var font := load(PIXEL_FONT_PATH)
+		if font is Font:
+			pixel_font = font
 
 
 func load_sequence(sequence: Array, start_time: float) -> void:
@@ -88,15 +97,15 @@ func _process(_delta: float) -> void:
 
 
 func _draw() -> void:
-	draw_rect(Rect2(Vector2(0, base_y - 135.0), Vector2(1280.0, 270.0)), Color(0.07, 0.08, 0.13, 0.92), true)
+	draw_rect(Rect2(Vector2(170.0, base_y - 78.0), Vector2(940.0, 156.0)), Color(0.07, 0.08, 0.13, 0.92), true)
 	_draw_beat_markers()
-	draw_line(Vector2(target_x, base_y - 118.0), Vector2(target_x, base_y + 118.0), Color(0.95, 0.85, 0.28), 4.0)
-	draw_string(ThemeDB.fallback_font, Vector2(target_x - 34.0, base_y - 132.0), "HIT", HORIZONTAL_ALIGNMENT_LEFT, -1.0, 20, Color.WHITE)
+	draw_line(Vector2(target_x, base_y - 64.0), Vector2(target_x, base_y + 64.0), Color(0.95, 0.85, 0.28), 4.0)
+	draw_string(_draw_font(), Vector2(target_x - 28.0, base_y - 82.0), "HIT", HORIZONTAL_ALIGNMENT_LEFT, -1.0, 13, Color.WHITE)
 
 	for lane_index in LANE_KEYS.size():
 		var y := _lane_y(LANE_KEYS[lane_index])
-		draw_line(Vector2(80.0, y), Vector2(1180.0, y), Color(0.28, 0.30, 0.42), 2.0)
-		draw_string(ThemeDB.fallback_font, Vector2(88.0, y - 12.0), LANE_KEYS[lane_index].to_upper(), HORIZONTAL_ALIGNMENT_LEFT, -1.0, 18, Color(0.78, 0.82, 0.92))
+		draw_line(Vector2(210.0, y), Vector2(1070.0, y), Color(0.28, 0.30, 0.42), 2.0)
+		draw_string(_draw_font(), Vector2(218.0, y - 10.0), LANE_KEYS[lane_index].to_upper(), HORIZONTAL_ALIGNMENT_LEFT, -1.0, 10, Color(0.78, 0.82, 0.92))
 
 	var now := Conductor.get_song_time()
 	for note in notes:
@@ -107,16 +116,16 @@ func _draw() -> void:
 		var note_time := float(note["timestamp"])
 		var x := target_x + (note_time - now) * note_speed
 		var y := _lane_y(key)
-		if x < 40.0 or x > spawn_x + 160.0:
+		if x < 190.0 or x > spawn_x + 120.0:
 			continue
 
 		var color := _note_color(note)
-		draw_rect(Rect2(Vector2(x - 19.0, y - 19.0), Vector2(38.0, 38.0)), color, true)
-		draw_rect(Rect2(Vector2(x - 19.0, y - 19.0), Vector2(38.0, 38.0)), Color.WHITE, false, 2.0)
-		draw_string(ThemeDB.fallback_font, Vector2(x - 10.0, y + 7.0), _key_label(key), HORIZONTAL_ALIGNMENT_LEFT, -1.0, 18, Color(0.05, 0.06, 0.09))
+		draw_rect(Rect2(Vector2(x - 15.0, y - 15.0), Vector2(30.0, 30.0)), color, true)
+		draw_rect(Rect2(Vector2(x - 15.0, y - 15.0), Vector2(30.0, 30.0)), Color.WHITE, false, 2.0)
+		draw_string(_draw_font(), Vector2(x - 7.0, y + 5.0), _key_label(key), HORIZONTAL_ALIGNMENT_LEFT, -1.0, 10, Color(0.05, 0.06, 0.09))
 
 		if bool(note["resolved"]):
-			draw_string(ThemeDB.fallback_font, Vector2(x - 30.0, y - 28.0), String(note["result"]), HORIZONTAL_ALIGNMENT_LEFT, -1.0, 13, Color.WHITE)
+			draw_string(_draw_font(), Vector2(x - 26.0, y - 22.0), String(note["result"]), HORIZONTAL_ALIGNMENT_LEFT, -1.0, 9, Color.WHITE)
 
 
 func _draw_beat_markers() -> void:
@@ -128,7 +137,7 @@ func _draw_beat_markers() -> void:
 	for beat in range(first_beat, last_beat + 1):
 		var beat_time := float(beat) * beat_duration
 		var x := target_x + (beat_time - now) * note_speed
-		if x < 80.0 or x > 1180.0:
+		if x < 210.0 or x > 1070.0:
 			continue
 
 		var color := Color(0.36, 0.39, 0.52, 0.65)
@@ -136,14 +145,14 @@ func _draw_beat_markers() -> void:
 		if beat % 4 == 0:
 			color = Color(0.72, 0.74, 0.86, 0.8)
 			width = 2.0
-		draw_line(Vector2(x, base_y - 118.0), Vector2(x, base_y + 118.0), color, width)
+		draw_line(Vector2(x, base_y - 64.0), Vector2(x, base_y + 64.0), color, width)
 
 
 func _lane_y(key: String) -> float:
 	var lane := LANE_KEYS.find(key)
 	if lane == -1:
 		lane = 0
-	return base_y - 78.0 + float(lane) * lane_gap
+	return base_y - 51.0 + float(lane) * lane_gap
 
 
 func _key_color(key: String) -> Color:
@@ -180,3 +189,9 @@ func _key_label(key: String) -> String:
 			return "L"
 		_:
 			return "?"
+
+
+func _draw_font() -> Font:
+	if pixel_font != null:
+		return pixel_font
+	return ThemeDB.fallback_font

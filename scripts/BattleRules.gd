@@ -1,7 +1,7 @@
 extends RefCounted
 class_name BattleRules
 
-const TURN_READY_DELAY := 2.0
+const TURN_READY_DELAY := 3.0
 const RECORD_DURATION := 3.0
 const DEFENSE_PHRASE_DELAY := 1.0
 const MAX_SEQUENCE_INPUTS := 6
