@@ -140,6 +140,7 @@ func _defend_input(key: String) -> void:
 		_apply_damage(defender_player, Rules.DAMAGE_ON_MISS, "MISS")
 	else:
 		Conductor.play_note_sfx(defender_player, key)
+		_play_temporary_animation(defender_player, "record", 0.2) # Feedback de toque
 		if result != "PERFECT": Conductor.pulse_music_distortion()
 		_show_feedback(result, Rules.RESULT_COLORS[result])
 
