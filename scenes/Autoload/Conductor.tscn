@@ -1,0 +1,62 @@
+[gd_scene format=3 uid="uid://b5ctdho7hffj7"]
+
+[ext_resource type="Script" uid="uid://rct8kscsb4jp" path="res://scripts/Autoload/Conductor.gd" id="1_conductor"]
+[ext_resource type="AudioStream" uid="uid://cne7g6iiar4e4" path="res://assets/audio/sfx/w_note.wav" id="2_w"]
+[ext_resource type="AudioStream" uid="uid://brth6fbb8skhn" path="res://assets/audio/battle_theme.ogg" id="2_music"]
+[ext_resource type="AudioStream" uid="uid://cykvtvlynfa4e" path="res://assets/audio/sfx/d_note.wav" id="3_d"]
+[ext_resource type="AudioStream" uid="uid://chkbvp7xki4ls" path="res://assets/audio/sfx/s_note.wav" id="4_s"]
+[ext_resource type="AudioStream" uid="uid://chgtf07t0isvc" path="res://assets/audio/sfx/a_note.wav" id="5_a"]
+[ext_resource type="AudioStream" uid="uid://na052t8hg4tf" path="res://assets/audio/sfx/up_note.wav" id="6_up"]
+[ext_resource type="AudioStream" uid="uid://4g1es5i2l71l" path="res://assets/audio/sfx/right_note.wav" id="7_right"]
+[ext_resource type="AudioStream" uid="uid://dyxo3cbmnnirf" path="res://assets/audio/sfx/down_note.wav" id="8_down"]
+[ext_resource type="AudioStream" uid="uid://mt4npebrcadn" path="res://assets/audio/sfx/left_note.wav" id="9_left"]
+[ext_resource type="AudioStream" uid="uid://b07r7q2xq7ch0" path="res://assets/audio/sfx/hit.wav" id="10_hit"]
+
+[node name="Conductor" type="Node"]
+script = ExtResource("1_conductor")
+
+[node name="MusicPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("2_music")
+
+[node name="SfxP1NoteUp" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("2_w")
+
+[node name="SfxP1NoteRight" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("3_d")
+
+[node name="SfxP1NoteDown" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("4_s")
+
+[node name="SfxP1NoteLeft" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("5_a")
+
+[node name="SfxP2NoteUp" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("6_up")
+
+[node name="SfxP2NoteRight" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("7_right")
+
+[node name="SfxP2NoteDown" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("8_down")
+
+[node name="SfxP2NoteLeft" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("9_left")
+
+[node name="SfxDamage" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("10_hit")
+
+[node name="SfxRecordNote" type="AudioStreamPlayer" parent="."]
+
+[node name="SfxPerfect" type="AudioStreamPlayer" parent="."]
+
+[node name="SfxGood" type="AudioStreamPlayer" parent="."]
+
+[node name="SfxMiss" type="AudioStreamPlayer" parent="."]
+
+[node name="SfxWrong" type="AudioStreamPlayer" parent="."]
+
+[node name="SfxOmission" type="AudioStreamPlayer" parent="."]
+
+[node name="SfxTurnStart" type="AudioStreamPlayer" parent="."]
+
+[node name="SfxGameOver" type="AudioStreamPlayer" parent="."]

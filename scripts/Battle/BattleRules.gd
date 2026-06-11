@@ -1,5 +1,4 @@
 extends RefCounted
-class_name BattleRules
 
 const TURN_READY_DELAY := 3.0
 const RECORD_DURATION := 3.0
@@ -7,7 +6,7 @@ const DEFENSE_PHRASE_DELAY := 1.0
 const MAX_SEQUENCE_INPUTS := 6
 const PERFECT_WINDOW := 0.05
 const GOOD_WINDOW := 0.12
-const MISS_WINDOW := 0.15
+const MISS_WINDOW := 0.3
 const DAMAGE_ON_MISS := 10
 const STARTING_HEALTH := 100
 

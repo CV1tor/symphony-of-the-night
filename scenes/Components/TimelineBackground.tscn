@@ -1,0 +1,10 @@
+[gd_scene format=3 uid="uid://c8iolet0jqivd"]
+
+[ext_resource type="Texture2D" uid="uid://3fd6nxcsqjbs" path="res://assets/timeline.png" id="1_timeline"]
+
+[node name="TimelineBackground" type="Sprite2D" unique_id=956985473]
+z_index = -10
+texture_filter = 1
+position = Vector2(526, 595)
+scale = Vector2(1.1630954, 1.3049998)
+texture = ExtResource("1_timeline")

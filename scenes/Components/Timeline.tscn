@@ -1,0 +1,129 @@
+[gd_scene format=3 uid="uid://cpyfdnrujpn38"]
+
+[ext_resource type="Script" uid="uid://cssjsrv6pu0rm" path="res://scripts/Components/Timeline.gd" id="1_timeline"]
+[ext_resource type="FontFile" uid="uid://dclwco4wlp5of" path="res://assets/fonts/PressStart2P-Regular.ttf" id="2_font"]
+[ext_resource type="PackedScene" uid="uid://c8iolet0jqivd" path="res://scenes/Components/TimelineBackground.tscn" id="3_timeline_background"]
+
+[node name="Timeline" type="Node2D" unique_id=1801739715]
+script = ExtResource("1_timeline")
+
+[node name="TimelineBackground" parent="." unique_id=1401631480 instance=ExtResource("3_timeline_background")]
+position = Vector2(653, 608)
+scale = Vector2(1.1202382, 1.49)
+
+[node name="LaneTargets" type="Node2D" parent="." unique_id=1670853707]
+position = Vector2(338.00006, 574)
+
+[node name="Up" type="ColorRect" parent="LaneTargets" unique_id=1271088246]
+offset_left = 0.99993896
+offset_top = -25.0
+offset_right = 36.99994
+offset_bottom = 11.0
+color = Color(0, 0, 0, 0.4)
+metadata/_edit_use_anchors_ = true
+
+[node name="Border" type="ReferenceRect" parent="LaneTargets/Up" unique_id=1490717425]
+layout_mode = 0
+offset_right = 36.0
+offset_bottom = 36.0
+border_color = Color(1, 1, 1, 0.9)
+border_width = 2.0
+editor_only = false
+metadata/_edit_use_anchors_ = true
+
+[node name="Label" type="Label" parent="LaneTargets/Up" unique_id=752950953]
+layout_mode = 0
+offset_right = 36.0
+offset_bottom = 36.0
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 10
+text = "W"
+horizontal_alignment = 1
+vertical_alignment = 1
+metadata/_edit_use_anchors_ = true
+
+[node name="Right" type="ColorRect" parent="LaneTargets" unique_id=381042947]
+offset_left = 0.99993896
+offset_top = 9.0
+offset_right = 36.99994
+offset_bottom = 45.0
+color = Color(0, 0, 0, 0.4)
+metadata/_edit_use_anchors_ = true
+
+[node name="Border" type="ReferenceRect" parent="LaneTargets/Right" unique_id=1845080973]
+layout_mode = 0
+offset_right = 36.0
+offset_bottom = 36.0
+border_color = Color(1, 1, 1, 0.9)
+border_width = 2.0
+editor_only = false
+metadata/_edit_use_anchors_ = true
+
+[node name="Label" type="Label" parent="LaneTargets/Right" unique_id=515802677]
+layout_mode = 0
+offset_right = 36.0
+offset_bottom = 36.0
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 10
+text = "D"
+horizontal_alignment = 1
+vertical_alignment = 1
+metadata/_edit_use_anchors_ = true
+
+[node name="Left" type="ColorRect" parent="LaneTargets" unique_id=1426542364]
+offset_left = 0.99993896
+offset_top = 43.0
+offset_right = 36.99994
+offset_bottom = 79.0
+color = Color(0, 0, 0, 0.4)
+metadata/_edit_use_anchors_ = true
+
+[node name="Border" type="ReferenceRect" parent="LaneTargets/Left" unique_id=2005027199]
+layout_mode = 0
+offset_right = 36.0
+offset_bottom = 36.0
+border_color = Color(1, 1, 1, 0.9)
+border_width = 2.0
+editor_only = false
+metadata/_edit_use_anchors_ = true
+
+[node name="Label" type="Label" parent="LaneTargets/Left" unique_id=1319343018]
+layout_mode = 0
+offset_right = 36.0
+offset_bottom = 36.0
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 10
+text = "A"
+horizontal_alignment = 1
+vertical_alignment = 1
+metadata/_edit_use_anchors_ = true
+
+[node name="Down" type="ColorRect" parent="LaneTargets" unique_id=1247292778]
+offset_left = 0.99993896
+offset_top = 77.0
+offset_right = 36.99994
+offset_bottom = 113.0
+color = Color(0, 0, 0, 0.4)
+metadata/_edit_use_anchors_ = true
+
+[node name="Border" type="ReferenceRect" parent="LaneTargets/Down" unique_id=697595975]
+layout_mode = 0
+offset_right = 36.0
+offset_bottom = 36.0
+border_color = Color(1, 1, 1, 0.9)
+border_width = 2.0
+editor_only = false
+metadata/_edit_use_anchors_ = true
+
+[node name="Label" type="Label" parent="LaneTargets/Down" unique_id=585121018]
+layout_mode = 0
+offset_right = 36.0
+offset_bottom = 36.0
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 10
+text = "S"
+horizontal_alignment = 1
+vertical_alignment = 1
+metadata/_edit_use_anchors_ = true
+
+[node name="NotesContainer" type="Node2D" parent="." unique_id=1811723263]

@@ -11,13 +11,13 @@ config_version=5
 [application]
 
 config/name="Symphony of the Fight"
-run/main_scene="res://scenes/battle/battle.tscn"
+run/main_scene="res://scenes/Battle/Battle.tscn"
 config/features=PackedStringArray("4.6")
 config/icon="res://icon.svg"
 
 [autoload]
 
-Conductor="*res://scenes/autoload/conductor.tscn"
+Conductor="*res://scenes/Autoload/Conductor.tscn"
 
 [display]
 
